@@ -53,12 +53,18 @@ void setup() {
 
   // if you get a connection, report back via serial:
   if (client.connect(server, 80)) {
+    String PostData = "lightInput=hello";
     Serial.println("connected");
     // Make a HTTP request:
-    client.println("GET /hello HTTP/1.1");
+    client.println("POST /hello HTTP/1.1");
     client.println("Host: limitless-headland-1164.herokuapp.com");
-    client.println("name1=Hello+World");
+    client.println("User-Agent: Arduino/1.0");  
     client.println("Connection: close");
+    client.println("Content-Type: application/x-www-form-urlencoded"); 
+    client.print("Content-Length: ");
+    client.println(PostData.length());
+    client.println();
+    client.println(PostData);
     client.println();
   } 
   else {

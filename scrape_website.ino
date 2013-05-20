@@ -26,7 +26,7 @@ String value[32];
 int stringPos = 0; // string index counter
 boolean startRead = false; // is reading?
 boolean readingFirst = true;
-int count = 0;
+int count = 0; //number of variables
 
 void setup(){
   Ethernet.begin(mac);
@@ -36,11 +36,11 @@ void setup(){
 void loop(){
   String pageValue = connectAndRead(); //connect to the server and read the output
   Serial.println(pageValue);
-//  int i;
-//  for (i=0; i<2; i = i + 1){
-//    Serial.println(variable[i]);
-//    Serial.println(value[i]); 
-//  }
+  int i;
+  for (i=0; i<count; i++){
+    Serial.println(variable[i]);
+    //Serial.println(value[i]); 
+  }
   delay(20000); //wait 20 seconds before connecting again
 }
 
@@ -77,7 +77,7 @@ String readPage(){
 
   stringPos = 0;
   memset( &inString, 0, 32 ); //clear inString memory
-  int count = 0;
+  count = 0;
 
   while(true){
     if (client.available()) {

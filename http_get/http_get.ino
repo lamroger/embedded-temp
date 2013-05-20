@@ -33,6 +33,10 @@ IPAddress ip(192,168,0,177);
 // that you want to connect to (port 80 is default for HTTP):
 EthernetClient client;
 
+char inString[32]; // string for incoming serial data
+int stringPos = 0; // string index counter
+boolean startRead = false; // is reading?
+
 void setup() {
  // Open serial communications and wait for port to open:
   Serial.begin(9600);
@@ -55,7 +59,7 @@ void setup() {
   if (client.connect(server, 80)) {
     Serial.println("connected");
     // Make a HTTP request:
-    client.println("GET /hello HTTP/1.1");
+    client.println("GET /testlamp HTTP/1.1");
     client.println("Host: limitless-headland-1164.herokuapp.com");
     client.println("Connection: close");
     client.println();
@@ -86,4 +90,37 @@ void loop()
     // do nothing forevermore:
     while(true);
   }
+}
+
+String readPage(){
+  //read the page, and capture & return everything between '<' and '>'
+
+  stringPos = 0;
+  memset( &inString, 0, 32 ); //clear inString memory
+
+  while(true){
+    if (client.available()) {
+      char c = client.read();
+      if (c == '<' ) { //'<' is our begining character
+        startRead = true; //Ready to start reading the part 
+      }else if(startRead){
+
+        if(c != '>'){ //'>' is our ending character
+          inString[stringPos] = c;
+          stringPos ++;
+        }else{
+          //got what we need here! We can disconnect now
+          startRead = false;
+          client.stop();
+          client.flush();
+          Serial.println("disconnecting.");
+          return inString;
+
+        }
+
+      }
+    }
+
+  }
+
 }
